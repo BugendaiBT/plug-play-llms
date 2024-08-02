@@ -361,9 +361,32 @@ if prompt :
         # Add user message to chat history
         st.session_state.messages.append({"role": "user", "content": prompt})
 
-        response = llm(prompt)
+        system_prompt = """
+You are a helpful AI assistant. Your primary functions are:
+1. Answer questions using your broad knowledge base and capabilities.
+2. If you're not certain about an answer, acknowledge your uncertainty and provide the best information you can, explaining any limitations.
+3. If the user's input is unclear or seems like unrelated gibberish, politely ask for clarification.
+
+Please process the user's input within the <user> tags and provide a helpful response based on your capabilities and knowledge.
+
+<user>
+{user_input}
+</user>
+"""
+        response = llm(system_prompt.format(user_input=prompt))
         # Display assistant response in chat message container
         with st.chat_message("assistant"):
             st.markdown(response)
         # Add assistant response to chat history
         st.session_state.messages.append({"role": "assistant", "content": response})
+
+
+footer_html = """
+<div style='text-align: center; margin-top: -10px;'> 
+    <p style='font-size: 10px;'>
+        👋 This is a demo app using amazing open-source LLMs from Hugging Face 🤗.
+    </p>
+</div>
+"""
+
+st.markdown(footer_html, unsafe_allow_html=True)
