@@ -1,6 +1,6 @@
 import streamlit as st 
-import langchain
-from langchain_community.llms import HuggingFaceEndpoint
+from langchain_huggingface import ChatHuggingFace
+from langchain_huggingface import HuggingFaceEndpoint
 from PIL import Image
 import fitz 
 
@@ -73,10 +73,10 @@ with col2:
     st.write(r"$\textsf{\huge Plug \& Play LLMs}$")
 
     
-llm_model = col3.selectbox('**Select LLM**', ["google/gemma-1.1-2b-it", "google/gemma-1.1-7b-it",
-                          "mistralai/Mistral-7B-Instruct-v0.2","mistralai/Mixtral-8x7B-Instruct-v0.1", 
-                          'NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO', 
-                         "HuggingFaceH4/zephyr-7b-beta"])
+llm_model = col3.selectbox('**Select LLM**', ["meta-llama/Llama-3.2-3B-Instruct", "meta-llama/Llama-3.1-8B-Instruct",
+                          "openai/gpt-oss-20b","deepseek-ai/DeepSeek-R1-Distill-Qwen-7B", 
+                          'Qwen/Qwen3-4B-Instruct-2507', 
+                         "moonshotai/Kimi-K2-Instruct"])
 
 
 col4.button('Clear Chat', on_click= reset_conversation)
@@ -90,9 +90,14 @@ if col6.button('Help'):
 
 llm = HuggingFaceEndpoint(
     repo_id=llm_model, 
+    task="conversational",
     temperature = 0.1,
-    max_new_tokens = 250,
-    top_k = 50)
+    max_new_tokens = 1024,
+    top_k = 50,
+    model_kwargs = {'load_in_8bit': True}
+)
+
+chat = ChatHuggingFace(llm=llm)
 
 st.session_state.uploaded_file = st.file_uploader(':blue[**Upload the PDF (Should be less than 4 pages)**]',  type = 'pdf')
 
@@ -164,7 +169,7 @@ Please process the following context and answer the subsequent question:
 Based solely on the above context, please provide your response:
 """
 
-                    response = llm(system_prompt.format(context=st.session_state.total_pdf_text, question=prompt))
+                    response = chat.invoke(system_prompt.format(context=st.session_state.total_pdf_text, question=prompt)).content
 
                     # Display assistant response in chat message container
                     with st.chat_message("assistant"):
