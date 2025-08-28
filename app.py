@@ -1,8 +1,6 @@
 import streamlit as st 
-import langchain
-from langchain_community.llms import HuggingFaceHub
-from langchain_community.chat_models.huggingface import ChatHuggingFace
-from langchain_community.llms import HuggingFaceEndpoint
+from langchain_huggingface import ChatHuggingFace
+from langchain_huggingface import HuggingFaceEndpoint
 from PIL import Image
 
 import os
@@ -76,11 +74,10 @@ with col1:
 with col2:
      st.write(r"$\textsf{\huge Plug \& Play LLMs}$")
 
-llm_model = col3.selectbox('**Select LLM**', ["google/gemma-1.1-2b-it", "google/gemma-1.1-7b-it",
-                          "mistralai/Mistral-7B-Instruct-v0.2","mistralai/Mixtral-8x7B-Instruct-v0.1", 
-                          'NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO', 
-                         "HuggingFaceH4/zephyr-7b-beta"])
-
+llm_model = col3.selectbox('**Select LLM**', ["meta-llama/Llama-3.2-3B-Instruct", "meta-llama/Llama-3.1-8B-Instruct",
+                          "openai/gpt-oss-20b","deepseek-ai/DeepSeek-R1-Distill-Qwen-7B", 
+                          'Qwen/Qwen3-4B-Instruct-2507', 
+                         "moonshotai/Kimi-K2-Instruct"])
 
 col4.button('Clear Chat', on_click= reset_conversation)
 
@@ -247,10 +244,14 @@ with col10:
 
 llm = HuggingFaceEndpoint(
     repo_id=llm_model, 
+    task="conversational",
     temperature = 0.1,
     max_new_tokens = 1024,
     top_k = 50,
+    model_kwargs = {'load_in_8bit': True}
 )
+
+chat = ChatHuggingFace(llm=llm)
 
 
 
@@ -265,7 +266,7 @@ if st.session_state.card1:
     # Add user message to chat history
     # st.session_state.messages.append({"role": "user", "content": p1})
 
-    response1 = llm(p1)
+    response1 = chat.invoke(p1).content
     with st.chat_message("assistant"):
         st.markdown(response1)
     # st.chat_message("assistant").markdown(response1)
@@ -277,7 +278,7 @@ if st.session_state.card2:
     st.chat_message("user").markdown(p2)
     # Add user message to chat history
     # st.session_state.messages.append({"role": "user", "content": p2})
-    response2 = llm(p2)
+    response2 = chat.invoke(p2).content
     with st.chat_message("assistant"):
         st.markdown(response2)
     # st.chat_message("assistant").markdown(response2)
@@ -289,7 +290,7 @@ if st.session_state.card3:
     st.chat_message("user").markdown(p3)
     # Add user message to chat history
     # st.session_state.messages.append({"role": "user", "content": p3})
-    response3 = llm(p3)
+    response3 = chat.invoke(p3).content
     with st.chat_message("assistant"):
         st.markdown(response3)
     # st.chat_message("assistant").markdown(response3)
@@ -302,7 +303,7 @@ if st.session_state.card4:
     st.chat_message("user").markdown(p4)
     # Add user message to chat history
     # st.session_state.messages.append({"role": "user", "content": p4})
-    response4 = llm(p4)
+    response4 = chat.invoke(p4).content
     with st.chat_message("assistant"):
         st.markdown(response4)
     # st.chat_message("assistant").markdown(response4)
@@ -315,7 +316,7 @@ if st.session_state.card5:
     st.chat_message("user").markdown(p5)
     # Add user message to chat history
     # st.session_state.messages.append({"role": "user", "content": p5})
-    response5 = llm(p5)
+    response5 = chat.invoke(p5).content
     with st.chat_message("assistant"):
         st.markdown(response5)
     # st.chat_message("assistant").markdown(response5)
@@ -330,7 +331,7 @@ if st.session_state.card6:
     st.chat_message("user").markdown(p6)
     # Add user message to chat history
     # st.session_state.messages.append({"role": "user", "content": p6})
-    response6 = llm(p6)
+    response6 = chat.invoke(p6).content
     with st.chat_message("assistant"):
         st.markdown(response6)
     # st.chat_message("assistant").markdown(response6)
@@ -373,7 +374,7 @@ Please process the user's input within the <user> tags and provide a helpful res
 {user_input}
 </user>
 """
-        response = llm(system_prompt.format(user_input=prompt))
+        response = chat(system_prompt.format(user_input=prompt)).content
         # Display assistant response in chat message container
         with st.chat_message("assistant"):
             st.markdown(response)
@@ -390,3 +391,4 @@ footer_html = """
 """
 
 st.markdown(footer_html, unsafe_allow_html=True)
+
