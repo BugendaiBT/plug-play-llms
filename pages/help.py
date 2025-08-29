@@ -1,7 +1,14 @@
 import streamlit as st 
 from PIL import Image
 
-st.set_page_config(page_title="Help section", layout="wide")
+# st.set_page_config(page_title="Help section", layout="wide")
+
+st.set_page_config(
+    page_title="TheAiExtract-LLM",
+    page_icon="bot.PNG",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
 st.markdown("""
         <style>
@@ -78,3 +85,4 @@ st.markdown('''
 5. **Clear chat history:** To start a fresh conversation, click on the :blue[Clear Chat] button.
 6. **Go back to LLMs:** Want to chat with LLMs again? Click on the :blue[Chat with LLMs] button.
 ''')
+
