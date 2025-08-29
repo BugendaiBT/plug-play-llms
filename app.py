@@ -19,7 +19,7 @@ if "messages" not in st.session_state:
 # st.set_page_config(page_title="Huggingface LLMs Chatbot", layout="wide")
 st.set_page_config(
     page_title="TheAiExtract-LLM",
-    page_icon="bot.PNG",
+    page_icon="bot.png",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -397,5 +397,6 @@ footer_html = """
 """
 
 st.markdown(footer_html, unsafe_allow_html=True)
+
 
 
