@@ -19,7 +19,14 @@ if 'total_pdf_text' not in st.session_state:
     st.session_state.total_pdf_text = ''
 
 
-st.set_page_config(page_title="Chat With PDFs", layout="wide")
+# st.set_page_config(page_title="Chat With PDFs", layout="wide")
+
+st.set_page_config(
+    page_title="TheAiExtract-LLM",
+    page_icon="bot.PNG",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
 def reset_conversation():
   st.session_state.pdfmessages = []
