@@ -23,7 +23,7 @@ if 'total_pdf_text' not in st.session_state:
 
 st.set_page_config(
     page_title="TheAiExtract-LLM",
-    page_icon="bot.PNG",
+    page_icon="bot.png",
     layout="wide",
     initial_sidebar_state="expanded"
 )
